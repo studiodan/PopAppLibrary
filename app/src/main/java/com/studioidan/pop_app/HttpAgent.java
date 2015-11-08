@@ -178,6 +178,7 @@ public class HttpAgent extends AsyncTask<String, String, String> {
                 }
             } else
                 mCallback.onRequestEnd(mMethodName, res);
+            //minor change
 
         }
     }
