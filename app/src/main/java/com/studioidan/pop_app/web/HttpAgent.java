@@ -1,6 +1,7 @@
-package com.studioidan.pop_app;
+package com.studioidan.pop_app.web;
 
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -15,9 +16,6 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.params.HttpParams;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -32,14 +30,13 @@ import java.util.Map;
  * Created by PopApp_laptop on 14/06/2015.
  */
 public class HttpAgent extends AsyncTask<String, String, String> {
-    private static final int TIME_OUT = 10000;
     private String tag = "HttpAgent";
 
     public enum HTTP_METHOD {GET, POST}
 
     public Dialog mDialog = null;
     public String mUrl;
-    public String mMethodName="";
+    public String mMethodName = "";
     public boolean isJson = true;
     public Context context;
     public Map<String, String> headers;
@@ -70,13 +67,13 @@ public class HttpAgent extends AsyncTask<String, String, String> {
         return this;
     }
 
-    public HttpAgent addParam(String key, String value) {
-        params.put(key, value);
+    public HttpAgent setJson(boolean isJson) {
+        this.isJson = isJson;
         return this;
     }
 
-    public HttpAgent setJson(boolean isJson) {
-        this.isJson = isJson;
+    public HttpAgent addParam(String key, String value) {
+        params.put(key, value);
         return this;
     }
 
@@ -87,6 +84,13 @@ public class HttpAgent extends AsyncTask<String, String, String> {
 
     public HttpAgent withContext(Context con) {
         this.context = con;
+        return this;
+    }
+
+    public HttpAgent withSimpleDialog(Context con, String title) {
+        this.context = con;
+        this.mDialog = new ProgressDialog(context);
+        mDialog.setTitle(title);
         return this;
     }
 
@@ -107,9 +111,8 @@ public class HttpAgent extends AsyncTask<String, String, String> {
     @Override
     protected String doInBackground(String... strings) {
         String responseStr = "";
-        HttpParams httpParameters = new BasicHttpParams();
-        HttpConnectionParams.setConnectionTimeout(httpParameters, TIME_OUT);
-        HttpClient httpClient = new DefaultHttpClient(httpParameters);        String paramsString = "";
+        HttpClient httpClient = new DefaultHttpClient();
+        String paramsString = "";
 
         if (method == HTTP_METHOD.GET) {
             //set params
@@ -157,7 +160,7 @@ public class HttpAgent extends AsyncTask<String, String, String> {
 
     @Override
     protected void onPostExecute(String res) {
-        //super.onPostExecute(s);
+        //super.onPostExecute();
         if (mDialog != null)
             mDialog.dismiss();
 
@@ -171,14 +174,13 @@ public class HttpAgent extends AsyncTask<String, String, String> {
             if (isJson) {
                 try {
                     JSONObject responseJson = new JSONObject(res);
-                    mCallback.onJsonRequestEnd(mMethodName, responseJson);
+                    mCallback.onRequestJsonEnd(mMethodName, responseJson);
                 } catch (JSONException e) {
                     Log.e(tag, e.getMessage());
                     mCallback.onError(mMethodName, e.getMessage());
                 }
             } else
                 mCallback.onRequestEnd(mMethodName, res);
-            //minor
 
         }
     }

@@ -1,11 +1,13 @@
-package com.studioidan.popapplibrary;
+package com.studioidan.pop_app.web;
 
-import java.lang.reflect.Type;
-import com.google.gson.Gson;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.preference.PreferenceManager;
+
+import com.google.gson.Gson;
+
+import java.lang.reflect.Type;
 
 
 public class CPM {

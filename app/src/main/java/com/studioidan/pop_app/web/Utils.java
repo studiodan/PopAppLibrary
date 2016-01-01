@@ -1,4 +1,4 @@
-package com.studioidan.pop_app;
+package com.studioidan.pop_app.web;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
